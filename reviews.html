@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Read JDH Studio client feedback or share a review about a project or service."
+    />
+    <title>Reviews — JDH Studio</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://jdhstudio.co/reviews.html" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header inner-header">
+      <a class="brand" href="index.html" aria-label="JDH Studio home"
+        ><span class="brand-mark">J</span><span>JDH <em>Studio</em></span></a
+      >
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+      >
+        <span></span><span></span><span></span
+        ><span class="sr-only">Open menu</span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+        <a href="studio.html">Studio</a><a href="services.html">Services</a
+        ><a href="work.html">Work</a><a href="contact.html">Contact</a
+        ><a
+          class="nav-cta"
+          href="https://wa.me/2348158535742?text=Hi%20JDH%20Studio%2C%20I%27d%20like%20to%20talk%20about%20a%20project."
+          target="_blank"
+          rel="noopener"
+          >WhatsApp us ↗</a
+        >
+      </nav>
+    </header>
+    <main id="main">
+      <section class="page-hero section-shell">
+        <p class="eyebrow"><span></span> Client feedback</p>
+        <h1>Good work should leave a <i>trace.</i></h1>
+        <p>
+          Read a note from a recent project, or share what it was like to work
+          with JDH Studio.
+        </p>
+      </section>
+      <section class="reviews-layout section-shell">
+        <article class="review-card">
+          <p class="review-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <blockquote>“The design system looks really good 😊”</blockquote>
+          <p class="review-author">Amarachi Eche</p>
+          <p class="review-context">Tannora e-commerce website</p>
+        </article>
+        <div class="review-invite">
+          <p class="eyebrow"><span></span> Your experience</p>
+          <h2>Worked with JDH Studio?</h2>
+          <p>
+            Share a few honest words about the project, service, or result. Your
+            review will be sent to JDH Studio for approval before anything is
+            published.
+          </p>
+          <a class="button button-primary" href="#review-form"
+            >Write a review <span>↓</span></a
+          >
+        </div>
+      </section>
+      <section id="review-form" class="review-form-section section-shell">
+        <form
+          class="review-form"
+          action="https://formspree.io/f/xvkpdweq"
+          method="POST"
+        >
+          <input
+            type="hidden"
+            name="_subject"
+            value="New JDH Studio review submission"
+          />
+          <div class="form-row">
+            <label for="review-name">Your name</label
+            ><input id="review-name" name="name" autocomplete="name" required />
+          </div>
+          <div class="form-row">
+            <label for="review-business"
+              >Business / project <span>(optional)</span></label
+            ><input
+              id="review-business"
+              name="business_or_project"
+              autocomplete="organization"
+            />
+          </div>
+          <fieldset class="rating-field">
+            <legend>Your rating</legend>
+            <div class="rating-options">
+              <label
+                ><input type="radio" name="rating" value="5" required /> 5
+                ★</label
+              ><label><input type="radio" name="rating" value="4" /> 4 ★</label
+              ><label><input type="radio" name="rating" value="3" /> 3 ★</label
+              ><label><input type="radio" name="rating" value="2" /> 2 ★</label
+              ><label><input type="radio" name="rating" value="1" /> 1 ★</label>
+            </div>
+          </fieldset>
+          <div class="form-row">
+            <label for="review-text">Your review</label
+            ><textarea
+              id="review-text"
+              name="review"
+              rows="5"
+              required
+            ></textarea>
+          </div>
+          <div class="form-row">
+            <label for="review-permission"
+              >May JDH Studio publish this review on its website?</label
+            ><select
+              id="review-permission"
+              name="publication_permission"
+              required
+            >
+              <option value="">Choose one</option>
+              <option value="yes">Yes, I give permission to publish it</option>
+              <option value="no">No, keep my review private</option>
+            </select>
+          </div>
+          <button class="button button-primary" type="submit">
+            Send review <span>↗</span>
+          </button>
+          <p class="form-note">
+            A “Yes” response gives JDH Studio permission to consider the review
+            for publication. Reviews are manually approved before they appear on
+            the website. See the <a href="privacy.html">privacy policy</a>.
+          </p>
+        </form>
+      </section>
+    </main>
+    <footer class="footer section-shell">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark">J</span><span>JDH <em>Studio</em></span></a
+      >
+      <p>Technology built around your business.</p>
+      <a class="back-top" href="#main">Back to top ↑</a
+      ><small>© <span data-year></span> JDH Studio.</small>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
