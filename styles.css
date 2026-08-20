@@ -439,6 +439,42 @@ h2 i {
 .automation-visual {
   background: linear-gradient(140deg, #1b2529, #111518);
 }
+.leadflow-visual,
+.aster-visual,
+.noma-visual {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 27px;
+  color: var(--paper);
+  text-decoration: none;
+}
+.visual-kicker {
+  color: var(--accent);
+  font: 500 10px var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.leadflow-visual strong,
+.aster-visual strong,
+.noma-visual strong {
+  font: 700 clamp(2.2rem, 5vw, 4.2rem)/0.86 var(--serif);
+  letter-spacing: -0.06em;
+}
+.visual-prompt {
+  align-self: flex-end;
+  color: #c2c8c3;
+  font-size: 12px;
+}
+.leadflow-visual {
+  background: #263b3f;
+}
+.aster-visual {
+  background: linear-gradient(145deg, #496b68, #172c2e);
+}
+.noma-visual {
+  background: linear-gradient(145deg, #6c6255, #28241f);
+}
 .flow-card {
   position: absolute;
   border: 1px solid #f4f2ed52;
