@@ -1,192 +1,142 @@
-const menuButton = document.querySelector(".menu-toggle");
-const nav = document.querySelector(".site-nav");
-const setMenuState = (open) => {
-  menuButton?.setAttribute("aria-expanded", String(open));
-  menuButton
-    ?.querySelector(".sr-only")
-    ?.replaceChildren(
-      document.createTextNode(open ? "Close menu" : "Open menu"),
-    );
+const questions = [...document.querySelectorAll(".question")];
+const form = document.querySelector("#lead-form");
+const nextButton = document.querySelector("#next-button");
+const backButton = document.querySelector("#back-button");
+const progressBar = document.querySelector("#progress-bar");
+const stepLabel = document.querySelector("#step-label");
+const progressValue = document.querySelector("#progress-value");
+const result = document.querySelector("#result");
+const assistantCard = document.querySelector(".assistant-card");
+let currentStep = 0;
+const answers = {};
+const updateStep = () => {
+  if (!form) return;
+  questions.forEach((question, index) =>
+    question.classList.toggle("active", index === currentStep),
+  );
+  const percent = Math.round(((currentStep + 1) / questions.length) * 100);
+  progressBar.style.width = `${percent}%`;
+  progressValue.textContent = `${percent}%`;
+  stepLabel.textContent = `Question ${String(currentStep + 1).padStart(2, "0")} / ${String(questions.length).padStart(2, "0")}`;
+  backButton.hidden = currentStep === 0;
+  nextButton.textContent =
+    currentStep === questions.length - 1 ? "See my next step →" : "Continue →";
 };
-menuButton?.addEventListener("click", () => {
-  const open = nav.classList.toggle("open");
-  setMenuState(open);
-  if (open) nav.querySelector("a")?.focus();
+const selected = () =>
+  form.querySelector(`.question[data-step="${currentStep}"] input:checked`);
+if (nextButton) nextButton.addEventListener("click", () => {
+  const choice = selected();
+  if (!choice) {
+    questions[currentStep].animate(
+      [
+        { transform: "translateX(-4px)" },
+        { transform: "translateX(4px)" },
+        { transform: "translateX(0)" },
+      ],
+      { duration: 180 },
+    );
+    return;
+  }
+  answers[choice.name] = choice.value;
+  if (currentStep < questions.length - 1) {
+    currentStep += 1;
+    updateStep();
+  } else showResult();
 });
-nav?.querySelectorAll("a").forEach((link) =>
-  link.addEventListener("click", () => {
-    nav.classList.remove("open");
-    setMenuState(false);
-  }),
-);
+if (backButton) backButton.addEventListener("click", () => {
+  if (currentStep > 0) {
+    currentStep -= 1;
+    updateStep();
+  }
+});
+const serviceFor = {
+  website: {
+    title: "A clearer digital front door.",
+    copy: "A focused website can make your offer easier to understand, trust, and act on.",
+    action: "website",
+  },
+  automation: {
+    title: "Less manual work, more momentum.",
+    copy: "An automation can connect the repetitive steps that are slowing the business down.",
+    action: "automation",
+  },
+  software: {
+    title: "A system shaped around the real work.",
+    copy: "A custom software or backend project can bring the logic behind the process into one useful place.",
+    action: "software",
+  },
+  unsure: {
+    title: "Start with the problem, not the package.",
+    copy: "The most useful next step is a conversation that gets close to what is actually happening.",
+    action: "conversation",
+  },
+};
+const stageLabels = {
+  idea: "Just exploring",
+  ready: "Ready to plan",
+  improve: "Improving something existing",
+};
+const showResult = () => {
+  const service = serviceFor[answers.need] || serviceFor.unsure;
+  const next =
+    answers.next === "form"
+      ? "Continue through a project enquiry"
+      : "Start a conversation on WhatsApp";
+  document.querySelector("#result-title").textContent = service.title;
+  document.querySelector("#result-copy").textContent = service.copy;
+  document.querySelector("#result-summary").innerHTML =
+    `<div><span>Direction</span> ${service.action}</div><div><span>Stage</span> ${stageLabels[answers.stage] || "To be discovered"}</div><div><span>Next</span> ${next}</div>`;
+  const message = encodeURIComponent(
+    `Hi JDH Studio, I used the LeadFlow assistant. I am interested in ${service.action}. I am currently ${stageLabels[answers.stage]?.toLowerCase() || "exploring the need"} and would like to discuss the next step.`,
+  );
+  const action = document.querySelector("#result-action");
+  if (answers.next === "form") {
+    action.href = "https://jdhstudio.co/contact.html";
+    action.innerHTML = "Continue to enquiry <span>↗</span>";
+  } else {
+    action.href = `https://wa.me/2348158535742?text=${message}`;
+    action.target = "_blank";
+    action.rel = "noopener";
+    action.innerHTML = "Open WhatsApp <span>↗</span>";
+  }
+  form.hidden = true;
+  result.hidden = false;
+  assistantCard.scrollIntoView({ behavior: "smooth", block: "center" });
+};
+const restartButton = document.querySelector("#restart-button");
+if (restartButton) restartButton.addEventListener("click", () => {
+  Object.keys(answers).forEach((key) => delete answers[key]);
+  currentStep = 0;
+  form.reset();
+  form.hidden = false;
+  result.hidden = true;
+  updateStep();
+});
 const observer = new IntersectionObserver(
-  (entries) => {
+  (entries) =>
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add("is-visible");
         observer.unobserve(entry.target);
       }
-    });
-  },
+    }),
   { threshold: 0.12 },
 );
 document
   .querySelectorAll(".reveal")
   .forEach((element) => observer.observe(element));
-const year = document.querySelector("[data-year]");
-if (year) year.textContent = new Date().getFullYear();
-const updateScroll = () => {
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  document.documentElement.style.setProperty(
-    "--scroll-progress",
-    `${max ? (window.scrollY / max) * 100 : 0}%`,
-  );
-};
-window.addEventListener("scroll", updateScroll, { passive: true });
-updateScroll();
 
-document.querySelectorAll(".footer").forEach((footer) => {
-  if (footer.querySelector(".footer-legal-links")) return;
-  const links = document.createElement("span");
-  links.className = "footer-legal-links";
-  links.innerHTML =
-    '<a href="reviews.html">Reviews</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a>';
-  footer.append(links);
-});
-
-const assistantMarkup = `
-  <aside class="site-assistant" aria-label="JDH Studio AI assistant">
-    <div class="assistant-panel" id="assistant-panel" hidden>
-      <div class="assistant-header">
-        <div>
-          <p class="assistant-kicker">JDH Guide</p>
-          <h2>How can I help?</h2>
-        </div>
-        <button class="assistant-close" type="button" aria-label="Close JDH Guide">×</button>
-      </div>
-      <div class="assistant-messages" aria-live="polite" aria-label="Assistant messages">
-        <p class="assistant-message assistant-message-bot">I can point you to the right JDH Studio service, explain the process, or help you start a conversation.</p>
-      </div>
-      <div class="assistant-prompts" aria-label="Suggested questions">
-        <button type="button" data-assistant-question="What services do you offer?">Services</button>
-        <button type="button" data-assistant-question="How does a project work?">Process</button>
-        <button type="button" data-assistant-question="I want to start a project">Start a project</button>
-      </div>
-      <form class="assistant-form">
-        <label class="sr-only" for="assistant-input">Ask JDH Guide a question</label>
-        <input id="assistant-input" name="question" autocomplete="off" placeholder="Ask a question..." />
-        <button type="submit" aria-label="Send question">↑</button>
-      </form>
-      <p class="assistant-note">A quick guide to JDH Studio, not a human representative.</p>
-    </div>
-    <button class="assistant-toggle" type="button" aria-expanded="false" aria-controls="assistant-panel">
-      <span class="assistant-toggle-mark" aria-hidden="true">✦</span><span>Ask JDH Guide</span>
-    </button>
-  </aside>`;
-document.body.insertAdjacentHTML("beforeend", assistantMarkup);
-
-const assistant = document.querySelector(".site-assistant");
-const assistantPanel = assistant?.querySelector(".assistant-panel");
-const assistantToggle = assistant?.querySelector(".assistant-toggle");
-const assistantClose = assistant?.querySelector(".assistant-close");
-const assistantMessages = assistant?.querySelector(".assistant-messages");
-const assistantInput = assistant?.querySelector("#assistant-input");
-const assistantAnswers = [
-  {
-    terms: [
-      "service",
-      "offer",
-      "build",
-      "website",
-      "software",
-      "automation",
-      "ai",
-    ],
-    answer:
-      "JDH Studio builds business websites, provides website maintenance, creates AI automations, and develops software, backend solutions, and useful AI-powered systems.",
-    link: "services.html",
-    label: "Explore services",
-  },
-  {
-    terms: ["process", "work", "start", "project", "begin", "approach"],
-    answer:
-      "Projects usually move through Understand, Plan, Build, Launch, and Support. The approach is shaped around the real business problem rather than a fixed package.",
-    link: "contact.html",
-    label: "Start a conversation",
-  },
-  {
-    terms: ["portfolio", "case", "example", "work", "tannora"],
-    answer:
-      "The Work page includes a live e-commerce project, an automation system in progress, and technical directions that are becoming future case studies.",
-    link: "work.html",
-    label: "See selected work",
-  },
-  {
-    terms: ["contact", "talk", "whatsapp", "email", "quote", "price", "cost"],
-    answer:
-      "The best next step is to describe what you want to improve, build, or untangle. You can use the contact form, email, or WhatsApp and JDH Studio can suggest a sensible starting point.",
-    link: "contact.html",
-    label: "Contact JDH Studio",
-  },
-];
-const addAssistantMessage = (text, type = "bot", action) => {
-  if (!assistantMessages) return;
-  const message = document.createElement("p");
-  message.className = `assistant-message assistant-message-${type}`;
-  message.textContent = text;
-  assistantMessages.append(message);
-  if (action) {
-    const link = document.createElement("a");
-    link.className = "assistant-action";
-    link.href = action.href;
-    link.textContent = action.label;
-    message.append(link);
-  }
-  assistantMessages.scrollTop = assistantMessages.scrollHeight;
-};
-const answerAssistant = (question) => {
-  const normalized = question.toLowerCase();
-  const match = assistantAnswers.find((entry) =>
-    entry.terms.some((term) => normalized.includes(term)),
-  );
-  if (match) {
-    addAssistantMessage(match.answer, "bot", {
-      href: match.link,
-      label: match.label,
-    });
-  } else {
-    addAssistantMessage(
-      "I can help with services, the project process, selected work, or getting in touch. Try one of those topics, or send the team a message directly.",
-      "bot",
-      { href: "contact.html", label: "Contact JDH Studio" },
-    );
-  }
-};
-const setAssistantState = (open) => {
-  if (!assistantPanel || !assistantToggle) return;
-  assistantPanel.hidden = !open;
-  assistantToggle.setAttribute("aria-expanded", String(open));
-  if (open) assistantInput?.focus();
-};
-assistantToggle?.addEventListener("click", () =>
-  setAssistantState(assistantPanel?.hidden ?? true),
-);
-assistantClose?.addEventListener("click", () => setAssistantState(false));
-assistant?.querySelectorAll("[data-assistant-question]").forEach((button) =>
-  button.addEventListener("click", () => {
-    const question = button.getAttribute("data-assistant-question");
-    if (!question) return;
-    addAssistantMessage(question, "user");
-    answerAssistant(question);
-  }),
-);
-assistant
-  ?.querySelector(".assistant-form")
-  ?.addEventListener("submit", (event) => {
+const contactForm = document.querySelector("#contact-form");
+if (contactForm) {
+  contactForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const question = assistantInput?.value.trim();
-    if (!question) return;
-    addAssistantMessage(question, "user");
-    answerAssistant(question);
-    assistantInput.value = "";
+    const data = new FormData(contactForm);
+    const subject = `Project enquiry from ${data.get("name")}`;
+    const body = `Name: ${data.get("name")}\nEmail: ${data.get("email")}\nProject: ${data.get("service")}\n\n${data.get("message")}`;
+    window.location.href = `mailto:jdhstudio.co@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const note = document.querySelector("#form-note");
+    note.hidden = false;
+    note.textContent = "Your email app should open with the enquiry ready to send.";
   });
+}
+updateStep();
